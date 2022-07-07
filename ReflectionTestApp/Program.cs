@@ -1,5 +1,4 @@
-﻿using ReflectionTestApp.Entities;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace ReflectionTestApp
@@ -8,18 +7,18 @@ namespace ReflectionTestApp
     {
         static void Main(string[] args)
         {
+            // O reportName seria o conjunto recebido no input.
             string reportName = "Payable";
 
+            // Aqui a gente deve tentar encontrar o relatório baseado no nome dele. Como não sabemos nesse momento se é um relatório de AP, AR ou Receita, vale a pena
+            // abstrair esse trecho fazendo uma validação caso encontre o relatório em um dos 3 tipos. Senão, estora uma exception.
             Type type = Type.GetType($"ReflectionTestApp.Entities.{reportName}Report");
             if (type == null)
             {
                 throw new Exception("Type not found.");
             }
 
-            Console.WriteLine("Type" + type);
-            var instance = Assembly.GetAssembly(type).CreateInstance(type.FullName);
-            Console.WriteLine("Instance type: " + instance.GetType());
-
+            // Aqui entra a lógica de usar Reflection, podendo deixar a chamada mais genérica.
             IScheduleReport report = new ScheduleReport();
             MethodInfo method = typeof(IScheduleReport).GetMethod("Schedule");
             MethodInfo genericMethod = method.MakeGenericMethod(type);
